@@ -42,8 +42,6 @@ def train_dcgan(D, G, lr_D, lr_G, latent_dim, dataloader, num_epochs, device, fi
     for w in D.parameters(): torch.nn.init.normal_(w, 0., 0.02)
     for w in G.parameters(): torch.nn.init.normal_(w, 0., 0.02)
 
-    # trainer_D = torch.optim.SGD(D.parameters(), lr_D, momentum=0.5)
-    # trainer_G = torch.optim.SGD(G.parameters(), lr_G, momentum=0.5)
     trainer_D = torch.optim.Adam(D.parameters(), lr_D, betas=(0.5, 0.999))
     trainer_G = torch.optim.Adam(G.parameters(), lr_G, betas=(0.5, 0.999))
 
@@ -59,8 +57,8 @@ def train_dcgan(D, G, lr_D, lr_G, latent_dim, dataloader, num_epochs, device, fi
             num_instances += batch_size
             z = torch.normal(0., 1., size=(batch_size, latent_dim, 1, 1), device=x.device)
 
-            loss_D += update_discriminator(x=x, z=z, D=D, G=G, criterion=criterion, trainer_D=trainer_D)
-            loss_G += update_generator(z=z, D=D, G=G, criterion=criterion, trainer_G=trainer_G)
+            loss_D += update_discriminator(x=x, z=z, D=D, G=G, criterion=criterion, trainer_D=trainer_D) * batch_size
+            loss_G += update_generator(z=z, D=D, G=G, criterion=criterion, trainer_G=trainer_G) * batch_size
             # if step_num % print_every==0:
             #   print(f"[Epoch {epoch}/{num_epochs}] [Step {step_num}/{len(dataloader)}] loss_D: {loss_D/num_instances:.4f}, loss_G: {loss_G/num_instances:.4f}")
 
